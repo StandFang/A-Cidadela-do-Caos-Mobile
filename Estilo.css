@@ -1,4 +1,4 @@
-Body {
+body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #3D0D0D; /* Fundo geral: Vermelho muito escuro, quase preto avermelhado */
     color: #FFFFFF; /* Branco puro: Cor do texto geral para máximo contraste */
@@ -195,6 +195,7 @@ Body {
     margin-bottom: 20px;
 }
 
+/* Ajustes gerais para as seções de atributos e inventário */
 .status-popup-content .atributos,
 .status-popup-content .inventario {
     margin-bottom: 20px;
@@ -202,103 +203,140 @@ Body {
     padding: 10px;
     border: 1px solid #7F2626; /* Borda para seções de atributos/inventário */
     border-radius: 8px;
+    background-color: #4C1414; /* Cor de fundo para as seções */
+}
+
+.status-popup-content .inventario h3 {
+    color: #FFCC00; /* Cor do título 'Inventário' */
+    text-align: center; /* Centraliza o título 'Inventário' */
+    margin-top: 0;
 }
 
 /* ********************************************************** */
-/* REVISÃO DOS ESTILOS PARA A FICHA DE STATUS - COMEÇO DA MODIFICAÇÃO */
+/* ESTILOS PARA A FICHA DE STATUS - ATRIBUTOS */
 /* ********************************************************** */
 
 .status-popup-content .atributos {
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Espaçamento entre as linhas de atributos */
+    gap: 10px; /* Espaçamento entre as linhas de atributos */
+    background-color: #4C1414;
+    padding: 20px;
 }
 
-.atributo-linha-flex {
+.atributo-linha { /* Novo container para cada linha de atributo */
     display: flex;
-    justify-content: space-between;
-    gap: 20px; /* Espaçamento entre as colunas (Habilidade/Energia, Sorte/Magia) */
+    align-items: center; /* Alinha todos os itens verticalmente no centro */
+    gap: 10px; /* Espaçamento padrão entre os elementos da linha */
     width: 100%;
-    flex-wrap: wrap; /* Permite que as colunas quebrem linha em telas menores */
+    flex-wrap: wrap; /* Permite que os itens quebrem linha em telas menores */
+    justify-content: flex-start; /* Alinha os itens à esquerda */
 }
 
-.atributo-coluna {
-    flex: 1; /* Faz com que as colunas ocupem o espaço disponível igualmente */
-    min-width: 250px; /* Largura mínima para cada coluna, para evitar que fiquem muito espremidas */
-    display: flex;
-    flex-direction: column; /* Empilha os itens (label, input, button, etc.) */
-    align-items: flex-start; /* Alinha o conteúdo à esquerda dentro da coluna */
-    gap: 5px; /* Espaçamento entre os elementos dentro da coluna (e.g., input e botão Fixar) */
-}
-
-.atributo-coluna.atributo-ouro-centralizado {
-    flex: 0 0 calc(50% - 10px); /* Ocupa 50% da largura da linha, considerando o gap */
-    /* Removido text-align e display flex aqui, pois o atributo-item já gerencia isso */
-}
-
-.atributo-item {
-    /* Mantém as propriedades de flex do .atributo-coluna */
-    width: 100%; /* Ocupa a largura total da coluna */
-    display: flex; /* Adicionado para que o label e os inputs/botões se organizem */
-    flex-direction: column; /* Empilha os elementos dentro do item */
-    gap: 5px; /* Espaçamento entre os elementos do item */
-}
-
-.atributo-item label {
+.atributo-linha label {
     font-weight: bold;
-    align-self: flex-start; /* Alinha o label à esquerda */
-    margin-right: 0; /* Remove margem direita desnecessária */
+    color: #FFFFFF;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    flex-shrink: 0; /* Não permite que o label encolha */
+    min-width: 70px; /* Largura mínima para labels, para alinhar */
+    text-align: right; /* Alinha o texto do label à direita para melhor organização */
 }
 
-.atributo-item input[type="number"] {
-    width: 100%; /* Campo de digitação ocupa 100% da largura do atributo-item */
-    box-sizing: border-box; /* Inclui padding e border na largura */
+.atributo-linha .valor-inicial {
     padding: 8px;
     border: 1px solid #7F2626;
     border-radius: 5px;
-    background-color: #4C1414;
-    color: #FFFFFF;
-    margin-right: 0;
+    background-color: #3D0D0D;
+    color: #FFCC00; /* Texto amarelo para o valor inicial */
     text-align: center; /* Centraliza o texto do input */
+    width: 60px; /* Largura fixa */
+    flex-shrink: 0;
+    box-sizing: border-box;
 }
 
-.atributo-item button.btn-fixar {
-    width: 100%; /* Botão Fixar com a mesma largura do input */
-    box-sizing: border-box;
+.atributo-linha .valor-inicial::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.atributo-linha button.btn-fixar {
     padding: 8px 12px;
     background-color: #CC6600;
     color: #FFFFFF;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    /* align-self: center; /* Removido para alinhar à esquerda junto com os inputs */
+    font-size: 0.8em;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease;
 }
 
-.atributo-item button.btn-fixar:disabled {
+.atributo-linha button.btn-fixar:hover {
+    background-color: #e07b00;
+}
+
+.atributo-linha button.btn-fixar:disabled {
     background-color: #666;
     cursor: not-allowed;
+    opacity: 0.7;
 }
 
-.botoes-ajuste-wrapper {
+/* Estilo para o grupo de controle de ajuste (Botões - / + com input no meio) */
+.ajuste-control-group {
     display: flex;
-    width: 100%; /* Ocupa 100% da largura do atributo-item */
-    gap: 5px; /* Espaçamento entre os botões + e - */
+    align-items: center;
+    gap: 0; /* Botões colados */
+    border: 1px solid #7F2626;
+    border-radius: 5px;
+    overflow: hidden;
+    background-color: #3D0D0D;
+    flex-grow: 1; /* Permite que o grupo cresça para ocupar espaço restante */
+    max-width: 150px; /* Limita o tamanho para não esticar demais */
+    flex-shrink: 0;
 }
 
-.atributo-item button.btn-ajuste {
-    flex: 1; /* Faz com que os botões + e - ocupem metade da largura disponível */
-    padding: 8px 12px;
+.ajuste-control-group .btn-ajuste-attr { /* Renomeado para evitar conflito */
     background-color: #CC6600;
     color: #FFFFFF;
     border: none;
-    border-radius: 5px;
+    padding: 8px 12px;
     cursor: pointer;
-    text-align: center; /* Centraliza o texto do botão */
+    font-size: 1.2em;
+    min-width: 40px;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0;
+    border-radius: 0; /* Remove borda arredondada individual */
 }
 
-.atributo-vazio {
-    flex: 1; /* Garante que a coluna vazia ocupe o espaço restante */
-    /* background-color: rgba(255, 255, 255, 0.1); /* Opcional: para visualizar a coluna vazia */
+.ajuste-control-group .btn-ajuste-attr:first-child {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.ajuste-control-group .btn-ajuste-attr:last-child {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.ajuste-control-group .btn-ajuste-attr:hover {
+    background-color: #e07b00;
+}
+
+.ajuste-control-group .ajuste-atual {
+    flex-grow: 1; /* Input cresce para preencher o espaço */
+    padding: 8px;
+    border: none;
+    background-color: transparent;
+    color: #FFCC00; /* Texto amarelo para o valor atual */
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.1em;
+    min-width: 50px;
+}
+
+.ajuste-control-group .ajuste-atual::placeholder {
+    color: rgba(255, 255, 255, 0.5);
 }
 
 /* ********************************************************** */
@@ -308,70 +346,144 @@ Body {
 
 .inventario-secao {
     margin-bottom: 15px;
-    padding: 10px;
-    border: 1px solid #7F2626; /* Borda das seções de inventário */
+    padding: 15px;
+    border: 1px solid #7F2626;
     border-radius: 8px;
+    background-color: #4C1414;
 }
 
 .inventario-secao h4 {
-    color: #FFCC00; /* Amarelo Ouro - Títulos de inventário */
+    color: #FFCC00;
     margin-top: 0;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    text-align: center;
 }
 
-/* Estilo para o SELECT de encantos */
-.inventario-secao select {
-    padding: 8px;
-    border: 1px solid #7F2626;
-    border-radius: 5px;
-    background-color: #4C1414;
-    color: #FFFFFF;
-    margin-right: 5px;
-    flex-grow: 1;
-    cursor: pointer;
+/* Estilo para a linha de adição de encantos/equipamentos */
+.encanto-add-row,
+.equipamento-add-row {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espaçamento entre os elementos da linha de adição */
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    justify-content: flex-start; /* Alinha à esquerda */
 }
 
-/* Estilo para o input de quantidade de encanto */
-#inputEncantoQuantidade {
-    width: 50px;
-    margin-left: 5px;
-}
-
+/* Alinhamento dos inputs/selects na linha de adição */
+.inventario-secao select,
 .inventario-secao input[type="text"] {
-    flex-grow: 1;
+    flex-grow: 1; /* Permite que cresçam */
     padding: 8px;
     border: 1px solid #7F2626;
     border-radius: 5px;
-    background-color: #4C1414;
+    background-color: #3D0D0D;
     color: #FFFFFF;
-    margin-right: 5px;
+    cursor: pointer;
+    min-width: 150px; /* Largura mínima para o select/input */
+    box-sizing: border-box; /* Garante que padding/border sejam incluídos na largura */
 }
 
-.inventario-secao button {
+
+/* Estilo para os botões de adicionar */
+.inventario-secao button#addEncanto,
+.inventario-secao button#addEquipamento {
     padding: 8px 15px;
     background-color: #CC6600;
     color: #FFFFFF;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0; /* Não permite encolher */
 }
 
-/* Estilos para lista de itens com contador (Encantos e Equipamentos) */
+.inventario-secao button#addEncanto:hover,
+.inventario-secao button#addEquipamento:hover {
+    background-color: #e07b00;
+}
+
+
+/* Container para os botões de quantidade do encanto (na linha de adição) */
+.encanto-quantidade-control {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1px solid #7F2626;
+    border-radius: 5px;
+    overflow: hidden;
+    background-color: #3D0D0D;
+    flex-shrink: 0;
+}
+
+.encanto-quantidade-control .btn-qtd-encanto {
+    background-color: #CC6600;
+    color: #FFFFFF;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 1.2em;
+    min-width: 40px;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0;
+    border-radius: 0; /* Remove borda arredondada individual */
+}
+.encanto-quantidade-control .btn-qtd-encanto:first-child {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+.encanto-quantidade-control .btn-qtd-encanto:last-child {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.encanto-quantidade-control .btn-qtd-encanto:hover {
+    background-color: #e07b00;
+}
+
+.encanto-quantidade-control .current-encanto-qtd {
+    padding: 8px 10px;
+    color: #FFCC00;
+    font-weight: bold;
+    min-width: 25px;
+    text-align: center;
+    display: inline-block;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+/* Estilos para lista de itens adicionados (Encantos e Equipamentos) */
 .inventario-secao ul {
     list-style: none;
     padding: 0;
-    margin-top: 10px;
+    margin-top: 15px;
 }
 
 .item-lista {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     background-color: #7F2626;
     padding: 8px 10px;
     border-radius: 4px;
-    margin-bottom: 5px;
-    flex-wrap: wrap;
+    margin-bottom: 8px;
+    color: #FFFFFF;
+    font-size: 0.95em;
+    display: flex;
+    flex-direction: column; /* Para empilhar nome/X e controles */
+    gap: 5px; /* Espaço entre as duas linhas do item (para encantos) */
+}
+
+.item-lista.equipamento-item { /* Estilo específico para itens de equipamento */
+    flex-direction: row; /* Nome e X na mesma linha */
+    justify-content: space-between;
+    align-items: center;
+}
+
+.item-lista .item-header { /* Container para o nome e X do item */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
 }
 
 .item-lista .item-nome {
@@ -379,43 +491,80 @@ Body {
     font-weight: bold;
     flex-grow: 1;
     text-align: left;
-    margin-right: 10px;
+    color: #FFCC00;
+    padding-right: 10px; /* Espaçamento entre o nome e o X */
 }
 
-.item-lista .item-quantidade-controle {
+.item-lista .item-quantidade-control { /* NOVO: Para encantos adicionados */
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 0;
+    border: 1px solid #3D0D0D;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: #3D0D0D;
+    margin-top: 5px; /* Espaço entre a linha do nome/X e esta linha */
 }
 
-.item-lista .item-quantidade {
-    font-weight: bold;
-    min-width: 20px;
-    text-align: center;
-}
-
-.item-lista .btn-ajuste-item {
+.item-lista .item-quantidade-control .btn-ajuste-item {
     background-color: #CC6600;
     color: #FFFFFF;
     border: none;
-    padding: 3px 8px;
-    border-radius: 3px;
+    padding: 5px 10px;
+    border-radius: 0;
     cursor: pointer;
-    font-size: 0.9em;
-    min-width: 25px;
-    height: 25px;
+    font-size: 1em;
+    min-width: 30px;
+    height: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0;
 }
 
-.item-lista .btn-ajuste-item:hover {
+.item-lista .item-quantidade-control .btn-ajuste-item:first-child {
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+.item-lista .item-quantidade-control .btn-ajuste-item:last-child {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+
+.item-lista .item-quantidade-control .btn-ajuste-item:hover {
     background-color: #e07b00;
 }
 
-.inventario-secao li button.remover-item {
-    margin-left: 10px;
+.item-lista .item-quantidade-control .item-quantidade-display {
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+    color: #FFFFFF;
+    padding: 5px 8px;
+    display: inline-block;
+    flex-shrink: 0;
 }
+
+
+.item-lista .remover-item {
+    background-color: #D32F2F;
+    color: #FFFFFF;
+    border: none;
+    padding: 5px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease;
+    align-self: center; /* Garante alinhamento vertical */
+}
+
+.item-lista .remover-item:hover {
+    background-color: #B71C1C;
+}
+
 
 /* Popup de Dados */
 .dados-popup-content {
@@ -629,146 +778,247 @@ Body {
     }
 
     /* ********************************************************** */
-    /* RESPONSIVIDADE PARA A FICHA DE STATUS EM MOBILE - COMEÇO */
+    /* RESPONSIVIDADE PARA A FICHA DE STATUS EM MOBILE - AJUSTADO FINAL */
+    /* (ATRIBUTOS) */
     /* ********************************************************** */
 
-    .atributo-linha-flex {
-        flex-direction: column; /* Em telas pequenas, empilha as colunas */
-        gap: 15px; /* Reduz o espaçamento entre as linhas */
+    .status-popup-content .atributos {
+        gap: 8px;
+        padding: 15px;
     }
 
-    .atributo-coluna {
-        min-width: unset; /* Remove a largura mínima para se ajustar melhor */
-        width: 100%; /* Colunas ocupam 100% da largura em mobile */
-        gap: 5px; /* Reduz o gap entre os elementos dentro da coluna */
-    }
-    
-    .atributo-coluna.atributo-ouro-centralizado {
-        flex: unset; /* Remove o flex fixo para se comportar como as outras colunas */
-        width: 100%;
-        align-items: center; /* Centraliza o item de ouro */
-    }
-    
-    .atributo-item {
-        width: 100%; /* Garante que o item ocupe a largura total da coluna */
-        gap: 5px; /* Reduz o gap entre os elementos */
-    }
-
-    .atributo-item label {
-        align-self: flex-start; /* Alinha o label à esquerda */
-    }
-
-    .atributo-item input[type="number"],
-    .atributo-item button.btn-fixar,
-    .botoes-ajuste-wrapper {
-        width: 100%; /* Todos os elementos ocupam 100% da largura em mobile */
-    }
-
-    .botoes-ajuste-wrapper {
-        flex-direction: row; /* Mantém os botões + e - lado a lado */
-        width: 100%; /* Ocupa 100% */
-    }
-
-    .atributo-item button.btn-ajuste {
-        flex: 1; /* Ocupam metade da largura disponível */
-    }
-
-    /* ********************************************************** */
-    /* RESPONSIVIDADE PARA A FICHA DE STATUS EM MOBILE - FIM */
-    /* ********************************************************** */
-
-
-    .inventario-secao {
-        flex-direction: column; /* Empilha itens de inventário verticalmente */
-        align-items: flex-start;
-    }
-
-    .inventario-secao input[type="text"],
-    .inventario-secao select {
-        width: 100%; /* Campos de input/select ocupam largura total */
-        margin-right: 0; /* Remover margem direita */
-        margin-bottom: 5px; /* Espaço entre campos */
-    }
-
-    #inputEncantoQuantidade {
-        width: 100%; /* Quantidade também ocupa largura total */
-        margin-left: 0; /* Remover margem esquerda */
-        margin-bottom: 5px;
-    }
-    
-    .inventario-secao button {
-        width: 100%; /* Botões de adicionar ocupam largura total */
-        margin: 5px 0;
-    }
-
-    /* Estilos para lista de itens com contador (Encantos e Equipamentos) */
-    .inventario-secao ul {
-        list-style: none;
-        padding: 0;
-        margin-top: 10px;
-    }
-
-    .item-lista {
+    .atributo-linha {
         display: flex;
+        flex-direction: row;
+        align-items: center;
         justify-content: space-between;
-        align-items: center;
-        background-color: #7F2626;
-        padding: 8px 10px;
-        border-radius: 4px;
-        margin-bottom: 5px;
-        flex-wrap: wrap;
+        gap: 2px;
+        flex-wrap: nowrap;
     }
-
-    .item-lista .item-nome {
-        cursor: pointer;
-        font-weight: bold;
-        flex-grow: 1;
+    
+    .atributo-linha label {
+        width: auto;
         text-align: left;
-        margin-right: 10px;
+        min-width: 50px;
+        font-size: 0.75em;
+        white-space: nowrap;
+        flex-shrink: 0;
+        margin-right: auto;
     }
 
-    .item-lista .item-quantidade-controle {
+    .atributo-linha .valor-inicial {
+        padding: 3px;
+        width: 45px; /* Aumentado a largura do input "Inicial" */
+        font-size: 0.8em;
+        font-weight: bold; /* Valor inicial em negrito */
+        flex-shrink: 0;
+        margin-right: 8px; /* Aumentado o espaço entre "Inicial" e "Fixar" */
+    }
+
+    .atributo-linha button.btn-fixar {
+        padding: 5px 10px;
+        font-size: 0.8em;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .ajuste-control-group {
         display: flex;
         align-items: center;
-        gap: 5px;
+        gap: 0;
+        border: 1px solid #7F2626;
+        border-radius: 5px;
+        overflow: hidden;
+        background-color: #3D0D0D;
+        flex-grow: 1; /* Permite que o grupo preencha o espaço restante */
+        flex-shrink: 1;
+        min-width: 85px;
+        max-width: 100px;
     }
 
-    .item-lista .item-quantidade {
-        font-weight: bold;
-        min-width: 20px;
-        text-align: center;
-    }
-
-    .item-lista .btn-ajuste-item {
-        background-color: #CC6600;
-        color: #FFFFFF;
-        border: none;
-        padding: 3px 8px;
-        border-radius: 3px;
-        cursor: pointer;
+    .ajuste-control-group .btn-ajuste-attr {
+        padding: 4px; /* Padding uniforme para +/- */
         font-size: 0.9em;
         min-width: 25px;
-        height: 25px;
+        height: 28px;
         display: flex;
         justify-content: center;
         align-items: center;
+        /* Remover border-radius individual aqui, pois o overflow:hidden do pai já faz o corte */
+        border-radius: 0; 
+    }
+    /* Ajustes específicos para as bordas do grupo */
+    .ajuste-control-group .btn-ajuste-attr:first-child {
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+    }
+    .ajuste-control-group .btn-ajuste-attr:last-child {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
     }
 
-    .item-lista .btn-ajuste-item:hover {
-        background-color: #e07b00;
+
+    .ajuste-control-group .ajuste-atual {
+        padding: 4px 0px; /* Zero padding horizontal para ir até a borda dos botões */
+        font-size: 0.85em;
+        min-width: 28px;
+        max-width: 40px;
+        flex-grow: 1; /* Permite que o número preencha o espaço disponível entre os botões */
+        flex-shrink: 1;
+        text-align: center; /* Garante que o número fique centralizado */
     }
 
-    .inventario-secao li button.remover-item {
-        margin-left: 10px;
-    }
+    /* ********************************************************** */
+    /* FIM DOS AJUSTES DE ATRIBUTOS EM MOBILE */
+    /* ********************************************************** */
 
-    /* Popup de Dados */
-    .dados-popup-content {
-        width: 95%; /* Ajustado para mobile */
+
+    /* ********************************************************** */
+    /* AJUSTES PARA ENCANTOS E ITENS ADICIONADOS EM MOBILE */
+    /* (QUANTIDADE: Botões e Número - Devem ir até a borda) */
+    /* ********************************************************** */
+
+    .encanto-add-row,
+    .equipamento-add-row {
         flex-direction: column;
+        gap: 10px;
     }
 
-    .dados-popup-content button[data-num-dados] {
-        width: 100%; /* Botões de rolagem ocupam largura total */
+    /* Alinhamento dos inputs/selects na linha de adição */
+    .inventario-secao select,
+    .inventario-secao input[type="text"] {
+        width: 100%; /* Ocupa a largura total */
+        margin: 0;
+        box-sizing: border-box; /* Garante que padding/border sejam incluídos na largura */
     }
+
+    /* Altura base para os botões de adicionar e o grupo de quantidade */
+    .inventario-secao button#addEncanto,
+    .inventario-secao button#addEquipamento {
+        height: 38px; /* Altura para igualar com o grupo de quantidade */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%; /* Botão Adicionar Equipamento deve ter 100% da largura */
+        box-sizing: border-box; /* Inclui padding/border na largura */
+    }
+
+    .encanto-quantidade-control {
+        width: 100%;
+        justify-content: center;
+        height: 38px;
+    }
+
+    .encanto-quantidade-control .btn-qtd-encanto {
+        padding: 0px 8px; /* Padding apenas horizontal */
+        font-size: 1.2em;
+        min-width: 35px;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0; /* Impede que o botão encolha demais */
+        /* Remover border-radius individual aqui, pois o overflow:hidden do pai já faz o corte */
+        border-radius: 0; 
+    }
+    /* Ajustes específicos para as bordas do grupo */
+    .encanto-quantidade-control .btn-qtd-encanto:first-child {
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+    }
+    .encanto-quantidade-control .btn-qtd-encanto:last-child {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+
+    .encanto-quantidade-control .current-encanto-qtd {
+        padding: 0px; /* Remove padding */
+        min-width: 25px;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-grow: 1; /* Permite que preencha o espaço entre os botões */
+    }
+
+    /* Estilos para lista de itens adicionados (Encantos) - Quantidade IGUAL ao adicionar */
+    .item-lista {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .item-lista .item-quantidade-control {
+        width: 100%;
+        justify-content: center;
+        height: 38px; /* AQUI: Mesma altura do 'encanto-quantidade-control' */
+        flex-shrink: 0; /* Impede que o controle encolha demais */
+    }
+
+    .item-lista .item-quantidade-control .btn-ajuste-item {
+        padding: 0px 8px; /* AQUI: Mesmo ajuste do btn-qtd-encanto */
+        font-size: 1.2em;
+        min-width: 35px;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-shrink: 0;
+        /* Remover border-radius individual aqui, pois o overflow:hidden do pai já faz o corte */
+        border-radius: 0;
+    }
+    /* Ajustes específicos para as bordas do grupo */
+    .item-lista .item-quantidade-control .btn-ajuste-item:first-child {
+        border-top-left-radius: 3px;
+        border-bottom-left-radius: 3px;
+    }
+    .item-lista .item-quantidade-control .btn-ajuste-item:last-child {
+        border-top-right-radius: 3px;
+        border-bottom-right-radius: 3px;
+    }
+
+    .item-lista .item-quantidade-control .item-quantidade-display {
+        padding: 0px; /* AQUI: Mesmo ajuste do current-encanto-qtd */
+        min-width: 25px;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-grow: 1; /* Permite que preencha o espaço entre os botões */
+    }
+
+    /* ********************************************************** */
+    /* FIM DOS AJUSTES PARA ENCANTOS E ITENS ADICIONADOS */
+    /* ********************************************************** */
+
+
+    .item-lista.equipamento-item {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .item-lista.equipamento-item .item-nome {
+        flex-grow: 1;
+    }
+    .item-lista.equipamento-item .remover-item {
+        margin-left: auto;
+    }
+
+    .item-lista .item-header {
+        flex-direction: row;
+        width: 100%;
+    }
+
+    .item-lista .item-nome {
+        width: auto;
+        flex-grow: 1;
+        text-align: left;
+        padding-right: 0;
+    }
+
+    .item-lista .remover-item {
+        margin-left: auto;
+        margin-right: 0;
+    }
+
 }
