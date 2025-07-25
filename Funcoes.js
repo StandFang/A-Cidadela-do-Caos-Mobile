@@ -38,12 +38,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputMagia = document.getElementById('inputMagia');
     const ajusteMagia = document.getElementById('ajusteMagia');
 
-    // Status Popup Elements - Inventário
+    // Status Popup Elements - Inventário - Encantos
     const listaEncantos = document.getElementById('listaEncantos');
     const selectEncanto = document.getElementById('selectEncanto');
-    const inputEncantoQuantidade = document.getElementById('inputEncantoQuantidade'); 
     const addEncantoBtn = document.getElementById('addEncanto');
+    const decEncantoQtdBtn = document.getElementById('decEncantoQtd'); // NOVO: Botão diminuir quantidade de encanto
+    const incEncantoQtdBtn = document.getElementById('incEncantoQtd'); // NOVO: Botão aumentar quantidade de encanto
+    const displayEncantoQtd = document.getElementById('displayEncantoQtd'); // NOVO: Display da quantidade de encanto
+    let currentEncantoQuantity = 1; // NOVO: Variável para a quantidade de encanto a ser adicionada
 
+    // Status Popup Elements - Inventário - Equipamentos
     const listaEquipamentos = document.getElementById('listaEquipamentos');
     const inputEquipamento = document.getElementById('inputEquipamento');
     const addEquipamentoBtn = document.getElementById('addEquipamento');
@@ -157,8 +161,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function openPopup(popupElement) {
         popupElement.classList.remove('hidden');
         if (popupElement === statusPopup) {
-            setupResetButtonListener(); 
+            setupResetButtonListener();
             populateEncantoDropdown();
+            updateEncantoQuantityDisplay(currentEncantoQuantity); // Atualiza o display de quantidade do encanto ao abrir
         } else if (popupElement === dadosPopup) {
             document.getElementById('dado1').textContent = '?';
             document.getElementById('dado2').textContent = '?';
@@ -174,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.addEventListener('click', (event) => {
             // Garante que o clique fora do conteúdo feche o popup,
             // exceto para os novos popups personalizados que têm seus próprios botões OK/Sim/Não/Confirmar/Cancelar.
-            if (event.target === overlay && ![customAlertDialog, customConfirmDialog, passwordPromptDialog].includes(overlay)) {
+            if (event.target === overlay && ![customAlertDialog, customConfirmDialog, passwordPromptDialog, textoPopup].includes(overlay)) { // Adicionado textoPopup aqui para que cliques fora do modal não o fechem
                 if (overlay === statusPopup) {
                     carregarFicha();
                 }
@@ -196,13 +201,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (inputEnergia.value !== '' && jogador.energiaInicial === null) jogador.energiaInicial = parseInt(inputEnergia.value);
         if (inputSorte.value !== '' && jogador.sorteInicial === null) jogador.sorteInicial = parseInt(inputSorte.value);
         if (inputOuro.value !== '' && jogador.ouroInicial === null) jogador.ouroInicial = parseInt(inputOuro.value);
-        if (inputMagia.value !== '' && jogador.magiaInicial === null) jogador.magiaInicial = parseInt(inputMagia.value); 
+        if (inputMagia.value !== '' && jogador.magiaInicial === null) jogador.magiaInicial = parseInt(inputMagia.value);
 
         jogador.habilidadeAtual = parseInt(ajusteHabilidade.value) || 0;
         jogador.energiaAtual = parseInt(ajusteEnergia.value) || 0;
         jogador.sorteAtual = parseInt(ajusteSorte.value) || 0;
         jogador.ouroAtual = parseInt(ajusteOuro.value) || 0;
-        jogador.magiaAtual = parseInt(ajusteMagia.value) || 0; 
+        jogador.magiaAtual = parseInt(ajusteMagia.value) || 0;
 
         localStorage.setItem('jogador', JSON.stringify(jogador));
         atualizarDisplayStatus();
@@ -237,12 +242,12 @@ document.addEventListener('DOMContentLoaded', () => {
             energiaInicial: null,
             sorteInicial: null,
             ouroInicial: null,
-            magiaInicial: null, 
+            magiaInicial: null,
             habilidadeAtual: 0,
             energiaAtual: 0,
             sorteAtual: 0,
             ouroAtual: 0,
-            magiaAtual: 0, 
+            magiaAtual: 0,
             encantos: [],
             equipamentos: [...equipamentosBaseFixos]
         };
@@ -262,12 +267,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     inputInitial.value = initialValue;
                     inputInitial.disabled = true;
                     btnFixar.disabled = true;
-                    btnFixar.style.backgroundColor = '#666';
                 } else {
                     inputInitial.value = '';
                     inputInitial.disabled = false;
                     btnFixar.disabled = false;
-                    btnFixar.style.backgroundColor = '';
                 }
             }
 
@@ -278,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         populateEncantoDropdown();
-        renderizarItens(listaEncantos, jogador.encantos, true, 'encanto'); 
+        renderizarItens(listaEncantos, jogador.encantos, true, 'encanto');
         renderizarItens(listaEquipamentos, jogador.equipamentos, true, 'equipamento');
     }
 
@@ -287,23 +290,70 @@ document.addEventListener('DOMContentLoaded', () => {
         items.forEach((itemObj, index) => {
             const li = document.createElement('li');
             li.classList.add('item-lista');
+            if (type === 'equipamento') { // Adiciona classe específica para equipamentos
+                li.classList.add('equipamento-item');
+            }
+
+            const itemHeader = document.createElement('div'); // Container para nome e X
+            itemHeader.classList.add('item-header');
+
+            const itemNameSpan = document.createElement('span');
+            itemNameSpan.classList.add('item-nome');
+            itemNameSpan.textContent = itemObj.nome;
+
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = '✖';
+            removeBtn.classList.add('remover-item');
+            removeBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                items.splice(index, 1);
+                salvarFicha();
+                renderizarItens(listElement, items, removable, type);
+            });
+
+            itemHeader.appendChild(itemNameSpan);
+            itemHeader.appendChild(removeBtn);
+            li.appendChild(itemHeader);
+
 
             if (type === 'encanto') {
-                li.innerHTML = `
-                    <span class="item-nome" data-nome="${itemObj.nome}">${itemObj.nome}</span>
-                    <div class="item-quantidade-controle">
-                        <button class="btn-ajuste-item" data-action="minus" data-index="${index}" data-type="${type}">-</button>
-                        <span class="item-quantidade">${itemObj.quantidade}</span>
-                        <button class="btn-ajuste-item" data-action="plus" data-index="${index}" data-type="${type}">+</button>
-                    </div>
-                `;
-                li.querySelector('.item-nome').addEventListener('click', (event) => {
+                itemNameSpan.dataset.nome = itemObj.nome; // Adiciona o data-nome para o click
+
+                // Controles de quantidade (apenas para encantos)
+                const quantityControlDiv = document.createElement('div');
+                quantityControlDiv.classList.add('item-quantidade-control');
+                
+                const minusBtn = document.createElement('button');
+                minusBtn.classList.add('btn-ajuste-item');
+                minusBtn.dataset.action = 'minus';
+                minusBtn.dataset.index = index;
+                minusBtn.dataset.type = type;
+                minusBtn.textContent = '-';
+                
+                const quantityDisplay = document.createElement('span');
+                quantityDisplay.classList.add('item-quantidade-display');
+                quantityDisplay.textContent = itemObj.quantidade;
+                
+                const plusBtn = document.createElement('button');
+                plusBtn.classList.add('btn-ajuste-item');
+                plusBtn.dataset.action = 'plus';
+                plusBtn.dataset.index = index;
+                plusBtn.dataset.type = type;
+                plusBtn.textContent = '+';
+
+                quantityControlDiv.appendChild(minusBtn);
+                quantityControlDiv.appendChild(quantityDisplay);
+                quantityControlDiv.appendChild(plusBtn);
+                li.appendChild(quantityControlDiv);
+
+                // Event listener para mostrar popup de descrição do encanto
+                itemNameSpan.addEventListener('click', (event) => {
                     const encantoNome = event.target.dataset.nome;
                     const encantosPageHtmlString = paginasIntroducao.find(p => p.id === 'encantos').render();
                     const tempDiv = document.createElement('div');
                     tempDiv.innerHTML = encantosPageHtmlString;
                     const targetButton = tempDiv.querySelector(`button[data-popup-title="${encantoNome}"]`);
-                    
+
                     if (targetButton && targetButton.dataset.popupContent) {
                         document.getElementById('textoPopupTitulo').textContent = encantoNome;
                         document.getElementById('textoPopupConteudo').innerHTML = targetButton.dataset.popupContent;
@@ -313,27 +363,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
 
-            } else {
-                li.textContent = itemObj.nome;
-            }
+            } // Se for 'equipamento', apenas o nome e o X já foram adicionados no itemHeader.
 
-            if (removable) {
-                const removeBtn = document.createElement('button');
-                removeBtn.textContent = '✖';
-                removeBtn.classList.add('remover-item');
-                removeBtn.addEventListener('click', (event) => {
-                    event.stopPropagation();
-                    items.splice(index, 1);
-                    salvarFicha();
-                    renderizarItens(listElement, items, removable, type);
-                });
-                li.appendChild(removeBtn);
-            }
             listElement.appendChild(li);
         });
 
+        // Adiciona listeners para os botões de ajuste de quantidade de encantos (para os itens renderizados)
         if (type === 'encanto') {
-            document.querySelectorAll('.btn-ajuste-item').forEach(button => {
+            document.querySelectorAll('.item-lista .item-quantidade-control .btn-ajuste-item').forEach(button => {
                 button.addEventListener('click', (event) => {
                     const index = parseInt(event.target.dataset.index);
                     const action = event.target.dataset.action;
@@ -344,11 +381,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             encanto.quantidade++;
                         } else if (action === 'minus') {
                             encanto.quantidade--;
-                            if (encanto.quantidade < 0) encanto.quantidade = 0;
+                            if (encanto.quantidade < 0) encanto.quantidade = 0; // Evita quantidades negativas
                         }
 
                         if (encanto.quantidade === 0) {
-                            items.splice(index, 1);
+                            items.splice(index, 1); // Remove o encanto se a quantidade chegar a zero
                         }
                         salvarFicha();
                         renderizarItens(listElement, items, removable, type);
@@ -366,26 +403,29 @@ document.addEventListener('DOMContentLoaded', () => {
         displayMagia.textContent = jogador.magiaAtual;
     }
 
+    // Event listeners para os botões de fixar atributos
     document.querySelectorAll('.btn-fixar').forEach(button => {
         button.addEventListener('click', (event) => {
             const attr = event.target.dataset.attr;
             const inputInitial = document.getElementById(`input${attr.charAt(0).toUpperCase() + attr.slice(1)}`);
             const value = parseInt(inputInitial.value);
 
-            if (!isNaN(value)) {
+            if (!isNaN(value) && value > 0) { // Garante que o valor seja um número positivo
                 jogador[`${attr}Inicial`] = value;
                 jogador[`${attr}Atual`] = value;
                 inputInitial.disabled = true;
                 event.target.disabled = true;
-                event.target.style.backgroundColor = '#666';
                 salvarFicha();
+                renderizarFichaNoPopup(); // Para atualizar o estado visual dos botões
             } else {
-                customAlert(`Por favor, insira um valor numérico para ${attr}.`); // USANDO CUSTOM ALERT
+                customAlert(`Por favor, insira um valor numérico válido e maior que zero para ${attr}.`); // USANDO CUSTOM ALERT
             }
         });
     });
 
-    document.querySelectorAll('.btn-ajuste').forEach(button => {
+    // Event listeners para os botões de ajuste de atributos (+/-)
+    // Agora apontam para o novo ajuste-control-group
+    document.querySelectorAll('.ajuste-control-group .btn-ajuste-attr').forEach(button => { // Corrigido seletor
         button.addEventListener('click', (event) => {
             const attr = event.target.dataset.attr;
             const adjustmentInput = document.getElementById(`ajuste${attr.charAt(0).toUpperCase() + attr.slice(1)}`);
@@ -403,6 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Event listeners para mudança manual nos inputs de ajuste de atributos
     document.querySelectorAll('.ajuste-atual').forEach(input => {
         input.addEventListener('change', (event) => {
             const attr = event.target.id.replace('ajuste', '').toLowerCase();
@@ -411,11 +452,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 jogador[`${attr}Atual`] = value;
                 salvarFicha();
             } else {
-                event.target.value = jogador[`${attr}Atual`];
+                event.target.value = jogador[`${attr}Atual`]; // Reverte para o valor salvo se a entrada for inválida
             }
         });
     });
 
+    // Função para popular o dropdown de encantos
     function populateEncantoDropdown() {
         if (selectEncanto) {
             selectEncanto.innerHTML = '<option value="">Selecione um Encanto</option>';
@@ -428,52 +470,76 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function addItem(inputElement, itemArray, listElement, removable, quantityElement = null, type = '') {
-        const itemNome = inputElement.value.trim();
-        let quantity = quantityElement ? parseInt(quantityElement.value) || 1 : 1;
-
-        if (itemNome) {
-            if (type === 'encanto') {
-                const existingItemIndex = itemArray.findIndex(i => i.nome === itemNome);
-                if (existingItemIndex !== -1) {
-                    itemArray[existingItemIndex].quantidade += quantity;
-                } else {
-                    itemArray.push({ nome: itemNome, quantidade: quantity });
-                }
-            } else { // Para equipamentos
-                const existingItemIndex = itemArray.findIndex(i => i.nome === itemNome);
-                if (existingItemIndex === -1) {
-                    itemArray.push({ nome: itemNome });
-                } else {
-                    customAlert(`Você já possui ${itemNome} em seu inventário.`); // USANDO CUSTOM ALERT
-                }
-            }
-            inputElement.value = '';
-            if (quantityElement) quantityElement.value = 1;
-            salvarFicha();
-            renderizarItens(listElement, itemArray, removable, type);
-        }
+    // Função para atualizar o display de quantidade de encanto a ser adicionado
+    function updateEncantoQuantityDisplay(quantity) {
+        displayEncantoQtd.textContent = quantity;
     }
 
-    if (selectEncanto && inputEncantoQuantidade && addEncantoBtn) {
+    // Event listeners para os botões de ajuste de quantidade de encanto a ser adicionado
+    decEncantoQtdBtn.addEventListener('click', () => {
+        if (currentEncantoQuantity > 1) {
+            currentEncantoQuantity--;
+            updateEncantoQuantityDisplay(currentEncantoQuantity);
+        }
+    });
+
+    incEncantoQtdBtn.addEventListener('click', () => {
+        currentEncantoQuantity++;
+        updateEncantoQuantityDisplay(currentEncantoQuantity);
+    });
+
+    // Função para adicionar um item (encanto ou equipamento)
+    function addItem(inputElement, itemArray, listElement, removable, quantityToAdd = 1, type = '') {
+        const itemNome = inputElement.value.trim();
+        if (!itemNome) {
+            customAlert(`Por favor, ${type === 'encanto' ? 'selecione um encanto' : 'digite o nome do equipamento'}.`);
+            return;
+        }
+
+        if (type === 'encanto') {
+            const existingItemIndex = itemArray.findIndex(i => i.nome === itemNome);
+            if (existingItemIndex !== -1) {
+                itemArray[existingItemIndex].quantidade += quantityToAdd;
+            } else {
+                itemArray.push({ nome: itemNome, quantidade: quantityToAdd });
+            }
+            inputElement.value = ''; // Limpa o select
+            currentEncantoQuantity = 1; // Reseta a quantidade para 1
+            updateEncantoQuantityDisplay(currentEncantoQuantity); // Atualiza o display
+        } else { // Para equipamentos
+            const existingItemIndex = itemArray.findIndex(i => i.nome.toLowerCase() === itemNome.toLowerCase());
+            if (existingItemIndex === -1) {
+                itemArray.push({ nome: itemNome });
+            } else {
+                customAlert(`Você já possui "${itemNome}" em seu inventário.`); // USANDO CUSTOM ALERT
+            }
+            inputElement.value = ''; // Limpa o input
+        }
+        salvarFicha();
+        renderizarItens(listElement, itemArray, removable, type);
+    }
+
+    // Event listener para adicionar encanto
+    if (selectEncanto && addEncantoBtn) {
         addEncantoBtn.addEventListener('click', () => {
             const selectedEncanto = selectEncanto.value;
             if (selectedEncanto) {
-                addItem(selectEncanto, jogador.encantos, listaEncantos, true, inputEncantoQuantidade, 'encanto');
-                selectEncanto.value = '';
+                // Passa o select como inputElement e a quantidade atual
+                addItem(selectEncanto, jogador.encantos, listaEncantos, true, currentEncantoQuantity, 'encanto');
             } else {
                 customAlert('Por favor, selecione um encanto da lista.'); // USANDO CUSTOM ALERT
             }
         });
     }
-    
+
+    // Event listener para adicionar equipamento
     addEquipamentoBtn.addEventListener('click', () => { addItem(inputEquipamento, jogador.equipamentos, listaEquipamentos, true, null, 'equipamento'); });
 
     // --- FUNÇÃO PARA CONFIGURAR O LISTENER DO BOTÃO RESETAR FICHA ---
     function setupResetButtonListener() {
         const btnResetarFicha = document.getElementById('btnResetarFicha');
         if (btnResetarFicha) {
-            btnResetarFicha.removeEventListener('click', handleResetClick);
+            btnResetarFicha.removeEventListener('click', handleResetClick); // Remove para evitar duplicidade
             btnResetarFicha.addEventListener('click', handleResetClick);
             console.log('Listener para btnResetarFicha ANEXADO na abertura do popup.');
         } else {
@@ -576,7 +642,7 @@ document.addEventListener('DOMContentLoaded', () => {
             onEnter: () => {
                 barraStatus.classList.remove('hidden');
                 botoesFixos.classList.remove('hidden');
-                salvarFicha(); 
+                salvarFicha();
             }
         },
         {
@@ -651,7 +717,7 @@ document.addEventListener('DOMContentLoaded', () => {
             onEnter: () => {
                 barraStatus.classList.remove('hidden');
                 botoesFixos.classList.remove('hidden');
-                
+
                 const equipamentosBaseFixos = [
                     { nome: 'Espada' },
                     { nome: 'Armadura de Couro' },
@@ -681,13 +747,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(pageNum => {
                     if (pageNum !== null) { // Se o usuário não cancelou
                         pageNum = parseInt(pageNum);
-                        if (pageNum === 217) { // Senha correta para a página 217
-                            navigateToPage(`pag_217`);
-                        } else if (!isNaN(pageNum) && pageNum > 0) {
-                            customAlert("Senha incorreta. Tente novamente ou siga outra alternativa."); // Senha incorreta
-                            // Opcional: navegar de volta para a página 229 ou manter o popup de senha
-                            // Para manter na página atual (229) após o erro, não fazemos nada aqui além do alert.
-                            // Para ir para a 229 novamente, seria navigateToPage('pag_229');
+                        if (!isNaN(pageNum) && pageNum > 0) {
+                            if (pageNum === 217) { // Senha correta para a página 217
+                                navigateToPage(`pag_217`);
+                            } else { // Senha incorreta ou página inválida
+                                customAlert("Senha incorreta. Tente novamente ou siga outra alternativa.");
+                            }
                         } else {
                             customAlert("Entrada inválida. Por favor, digite um número válido.");
                         }
@@ -829,8 +894,8 @@ document.addEventListener('DOMContentLoaded', () => {
             navigateToPage(currentPageId);
             carregarFicha();
             if (paginasIntroducao.findIndex(p => p.id === currentPageId) >= paginasIntroducao.findIndex(p => p.id === 'comoLutar')) {
-                    barraStatus.classList.remove('hidden');
-                    botoesFixos.classList.remove('hidden');
+                barraStatus.classList.remove('hidden');
+                botoesFixos.classList.remove('hidden');
             }
             await customAlert('Jogo carregado com sucesso!');
             console.log("Jogo carregado:", gameState);
@@ -851,4 +916,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     atualizarDisplayStatus();
     populateEncantoDropdown();
+    updateEncantoQuantityDisplay(currentEncantoQuantity); // Inicializa o display da quantidade de encanto
 });
