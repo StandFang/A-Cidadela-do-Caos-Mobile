@@ -1,0 +1,774 @@
+Body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #3D0D0D; /* Fundo geral: Vermelho muito escuro, quase preto avermelhado */
+    color: #FFFFFF; /* Branco puro: Cor do texto geral para máximo contraste */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+.container {
+    background-color: #661A1A; /* Vermelho predominante da capa para o container principal */
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    width: 90%;
+    max-width: 800px;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    min-height: 600px;
+}
+
+.conteudo {
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding-bottom: 80px; /* Espaço para a barra de status e botões fixos */
+}
+
+.conteudo h1, .conteudo h2 {
+    color: #FFCC00; /* Amarelo Ouro vibrante da capa - Cor dos títulos */
+    margin-bottom: 20px;
+}
+
+.conteudo img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* Regra de estilo para parágrafos do conteúdo principal com formatação ABNT-like */
+.conteudo p,
+.texto-popup-content p { /* Aplicar também aos parágrafos dentro de popups de texto */
+    line-height: 1.5; /* Espaçamento entre as linhas: 1.5 */
+    margin-bottom: 0; /* Remove a margem inferior padrão para usar padding-bottom */
+    padding-bottom: 10px; /* Adiciona espaçamento entre parágrafos (simulando 0pt antes e depois) */
+    max-width: 600px; /* Largura máxima para centralizar o bloco de texto */
+    text-align: justify; /* Alinha o texto à esquerda e à direita */
+    padding-left: 15px; /* Adiciona um padding padrão nas laterais */
+    padding-right: 15px; /* Adiciona um padding padrão nas laterais */
+    margin-left: auto; /* Centraliza o bloco de texto horizontalmente */
+    margin-right: auto; /* Centraliza o bloco de texto horizontalmente */
+    text-indent: 1.25cm; /* Recuo da primeira linha: 1.25cm (padrão ABNT) */
+    word-wrap: break-word; /* Garante que palavras longas não causem overflow */
+    hyphens: auto; /* Ajuda na justificação, quebrando palavras quando necessário */
+}
+
+/* Garante que o último parágrafo de uma sequência não tenha padding-bottom extra */
+.conteudo p:last-of-type,
+.texto-popup-content p:last-of-type {
+    padding-bottom: 0;
+}
+
+/* Garante que o STRONG dentro de P não quebre o fluxo ABNT */
+.conteudo p strong,
+.texto-popup-content p strong {
+    display: inline; /* Força strong a ser um elemento inline, para não quebrar o parágrafo */
+    font-weight: bold; /* Mantém o negrito */
+}
+
+
+.botoes-navegacao button,
+.botoes-interativos button,
+.popup-actions button {
+    background-color: #336666; /* Verde Azulado Escuro - Cor dos botões normais (complementar ao vermelho) */
+    color: #FFFFFF; /* Branco puro - Cor do texto dos botões */
+    border: none;
+    padding: 12px 25px;
+    margin: 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.botoes-navegacao button:hover,
+.botoes-interativos button:hover,
+.popup-actions button:hover {
+    background-color: #FFCC00; /* Amarelo Ouro da capa - Cor de hover dos botões */
+    color: #3D0D0D; /* Vermelho Escuro - Contraste para o texto no hover */
+}
+
+.botoes-navegacao {
+    margin-top: 20px;
+}
+
+/* Barra de Status e Botões Fixos */
+.barra-status, .botoes-fixos {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #4C1414; /* Vermelho mais escuro para a barra */
+    padding: 10px 20px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #7F2626; /* Borda sutil */
+}
+
+.barra-status span {
+    font-weight: bold;
+    margin: 0 10px;
+    color: #FFCC00; /* Amarelo Ouro - Cor do texto na barra de status */
+}
+
+.botoes-fixos button {
+    background-color: #7F2626; /* Vermelho escuro para botões fixos */
+    color: #FFFFFF; /* Branco puro */
+    border: none;
+    padding: 8px 15px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+}
+
+.botoes-fixos button:hover {
+    background-color: #FFCC00; /* Amarelo Ouro - Hover para botões fixos */
+    color: #3D0D0D;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Popups */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    background-color: #661A1A; /* Vermelho predominante da capa - Fundo dos popups */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+    text-align: center;
+    max-width: 90%;
+    max-height: 90%;
+    overflow-y: auto;
+    position: relative;
+}
+
+.status-popup-content {
+    width: 95%;
+    max-width: 700px;
+    height: auto;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+    .status-popup-content {
+        padding: 15px;
+    }
+}
+
+.status-popup-content h2 {
+    color: #FFCC00; /* Amarelo Ouro - Títulos de popup */
+    margin-bottom: 20px;
+}
+
+.status-popup-content .atributos,
+.status-popup-content .inventario {
+    margin-bottom: 20px;
+    text-align: left;
+    padding: 10px;
+    border: 1px solid #7F2626; /* Borda para seções de atributos/inventário */
+    border-radius: 8px;
+}
+
+/* ********************************************************** */
+/* REVISÃO DOS ESTILOS PARA A FICHA DE STATUS - COMEÇO DA MODIFICAÇÃO */
+/* ********************************************************** */
+
+.status-popup-content .atributos {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Espaçamento entre as linhas de atributos */
+}
+
+.atributo-linha-flex {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* Espaçamento entre as colunas (Habilidade/Energia, Sorte/Magia) */
+    width: 100%;
+    flex-wrap: wrap; /* Permite que as colunas quebrem linha em telas menores */
+}
+
+.atributo-coluna {
+    flex: 1; /* Faz com que as colunas ocupem o espaço disponível igualmente */
+    min-width: 250px; /* Largura mínima para cada coluna, para evitar que fiquem muito espremidas */
+    display: flex;
+    flex-direction: column; /* Empilha os itens (label, input, button, etc.) */
+    align-items: flex-start; /* Alinha o conteúdo à esquerda dentro da coluna */
+    gap: 5px; /* Espaçamento entre os elementos dentro da coluna (e.g., input e botão Fixar) */
+}
+
+.atributo-coluna.atributo-ouro-centralizado {
+    flex: 0 0 calc(50% - 10px); /* Ocupa 50% da largura da linha, considerando o gap */
+    /* Removido text-align e display flex aqui, pois o atributo-item já gerencia isso */
+}
+
+.atributo-item {
+    /* Mantém as propriedades de flex do .atributo-coluna */
+    width: 100%; /* Ocupa a largura total da coluna */
+    display: flex; /* Adicionado para que o label e os inputs/botões se organizem */
+    flex-direction: column; /* Empilha os elementos dentro do item */
+    gap: 5px; /* Espaçamento entre os elementos do item */
+}
+
+.atributo-item label {
+    font-weight: bold;
+    align-self: flex-start; /* Alinha o label à esquerda */
+    margin-right: 0; /* Remove margem direita desnecessária */
+}
+
+.atributo-item input[type="number"] {
+    width: 100%; /* Campo de digitação ocupa 100% da largura do atributo-item */
+    box-sizing: border-box; /* Inclui padding e border na largura */
+    padding: 8px;
+    border: 1px solid #7F2626;
+    border-radius: 5px;
+    background-color: #4C1414;
+    color: #FFFFFF;
+    margin-right: 0;
+    text-align: center; /* Centraliza o texto do input */
+}
+
+.atributo-item button.btn-fixar {
+    width: 100%; /* Botão Fixar com a mesma largura do input */
+    box-sizing: border-box;
+    padding: 8px 12px;
+    background-color: #CC6600;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    /* align-self: center; /* Removido para alinhar à esquerda junto com os inputs */
+}
+
+.atributo-item button.btn-fixar:disabled {
+    background-color: #666;
+    cursor: not-allowed;
+}
+
+.botoes-ajuste-wrapper {
+    display: flex;
+    width: 100%; /* Ocupa 100% da largura do atributo-item */
+    gap: 5px; /* Espaçamento entre os botões + e - */
+}
+
+.atributo-item button.btn-ajuste {
+    flex: 1; /* Faz com que os botões + e - ocupem metade da largura disponível */
+    padding: 8px 12px;
+    background-color: #CC6600;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center; /* Centraliza o texto do botão */
+}
+
+.atributo-vazio {
+    flex: 1; /* Garante que a coluna vazia ocupe o espaço restante */
+    /* background-color: rgba(255, 255, 255, 0.1); /* Opcional: para visualizar a coluna vazia */
+}
+
+/* ********************************************************** */
+/* FIM DOS ESTILOS PARA A FICHA DE STATUS */
+/* ********************************************************** */
+
+
+.inventario-secao {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #7F2626; /* Borda das seções de inventário */
+    border-radius: 8px;
+}
+
+.inventario-secao h4 {
+    color: #FFCC00; /* Amarelo Ouro - Títulos de inventário */
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+/* Estilo para o SELECT de encantos */
+.inventario-secao select {
+    padding: 8px;
+    border: 1px solid #7F2626;
+    border-radius: 5px;
+    background-color: #4C1414;
+    color: #FFFFFF;
+    margin-right: 5px;
+    flex-grow: 1;
+    cursor: pointer;
+}
+
+/* Estilo para o input de quantidade de encanto */
+#inputEncantoQuantidade {
+    width: 50px;
+    margin-left: 5px;
+}
+
+.inventario-secao input[type="text"] {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #7F2626;
+    border-radius: 5px;
+    background-color: #4C1414;
+    color: #FFFFFF;
+    margin-right: 5px;
+}
+
+.inventario-secao button {
+    padding: 8px 15px;
+    background-color: #CC6600;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Estilos para lista de itens com contador (Encantos e Equipamentos) */
+.inventario-secao ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+.item-lista {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #7F2626;
+    padding: 8px 10px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    flex-wrap: wrap;
+}
+
+.item-lista .item-nome {
+    cursor: pointer;
+    font-weight: bold;
+    flex-grow: 1;
+    text-align: left;
+    margin-right: 10px;
+}
+
+.item-lista .item-quantidade-controle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.item-lista .item-quantidade {
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+}
+
+.item-lista .btn-ajuste-item {
+    background-color: #CC6600;
+    color: #FFFFFF;
+    border: none;
+    padding: 3px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.9em;
+    min-width: 25px;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.item-lista .btn-ajuste-item:hover {
+    background-color: #e07b00;
+}
+
+.inventario-secao li button.remover-item {
+    margin-left: 10px;
+}
+
+/* Popup de Dados */
+.dados-popup-content {
+    width: 300px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dados-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.dado {
+    width: 80px;
+    height: 80px;
+    background-color: #FFCC00;
+    border: 3px solid #7F2626;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3em;
+    font-weight: bold;
+    color: #3D0D0D;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    animation: none;
+}
+
+.dado.rolando {
+    animation: rolarDado 0.5s infinite alternate;
+}
+
+@keyframes rolarDado {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(360deg); }
+}
+
+#resultadoDados {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #FFCC00;
+    margin-bottom: 15px;
+}
+
+.dados-popup-content button[data-num-dados] {
+    background-color: #336666;
+    color: #FFFFFF;
+    margin: 5px;
+}
+
+.dados-popup-content button[data-num-dados]:hover {
+    background-color: #FFCC00;
+    color: #3D0D0D;
+}
+
+/* Regra de estilo para parágrafos do popup de texto com formatação ABNT-like */
+.texto-popup-content p {
+    line-height: 1.5;
+    margin-bottom: 0;
+    padding-bottom: 10px;
+    text-align: justify;
+    text-indent: 1.25cm;
+    color: #FFFFFF;
+}
+
+.texto-popup-content p:last-of-type {
+    padding-bottom: 0;
+}
+
+.texto-popup-content h3 {
+    color: #FFCC00;
+    margin-bottom: 15px;
+}
+
+.texto-popup-content p strong {
+    color: #FFCC00;
+}
+
+/* NOVO: Estilos para Popups Personalizados (Alert, Confirm, Prompt de Senha) - Garantir visibilidade e botões */
+/* Reutilizam classes existentes como .popup-overlay e .popup-content, mas com ajustes para botões */
+
+/* Estilos específicos para o campo de input em popups de prompt */
+.custom-prompt-input {
+    width: calc(100% - 20px); /* Ajusta largura */
+    padding: 10px;
+    margin: 15px auto; /* Centraliza e adiciona espaço */
+    border: 1px solid #7F2626;
+    border-radius: 5px;
+    background-color: #4C1414;
+    color: #FFFFFF;
+    box-sizing: border-box; /* Inclui padding e border na largura */
+    display: block; /* Para margin: auto funcionar */
+}
+
+/* Garante que os botões dentro de customAlert/Confirm/Prompt sejam estilizados */
+#customAlertDialog .popup-actions button,
+#customConfirmDialog .popup-actions button,
+#passwordPromptDialog .popup-actions button {
+    background-color: #336666; /* Cor padrão dos botões de navegação */
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95em;
+    transition: background-color 0.3s ease;
+}
+
+#customAlertDialog .popup-actions button:hover,
+#customConfirmDialog .popup-actions button:hover,
+#passwordPromptDialog .popup-actions button:hover {
+    background-color: #FFCC00; /* Cor de hover */
+    color: #3D0D0D;
+}
+
+/* --- Media Queries para Responsividade --- */
+@media (max-width: 768px) {
+    body {
+        padding: 10px; /* Reduzir o padding geral do corpo */
+    }
+
+    .container {
+        width: 98%; /* Ocupa quase toda a largura em mobile */
+        padding: 15px; /* Reduzir o padding do container */
+        min-height: auto; /* Remove altura mínima fixa para se ajustar ao conteúdo */
+    }
+
+    .conteudo {
+        padding-bottom: 60px; /* Reduzir espaço para barra fixa em mobile */
+    }
+
+    .conteudo h1 {
+        font-size: 2em; /* Reduzir tamanho do título principal */
+    }
+
+    .conteudo h2 {
+        font-size: 1.5em; /* Reduzir tamanho dos subtítulos */
+    }
+
+    /* Ajuste para parágrafos em telas menores */
+    .conteudo p,
+    .texto-popup-content p {
+        padding-left: 10px;
+        padding-right: 10px;
+        text-indent: 0; /* Remover recuo ABNT em mobile para melhor aproveitamento de espaço */
+        text-align: left; /* Alinhar texto à esquerda em mobile para melhor leitura */
+    }
+    
+    /* Remover text-align: justify em mobile para evitar espaços grandes entre palavras */
+    .conteudo p {
+        text-align: left;
+    }
+
+
+    /* Botões de navegação e interativos em mobile */
+    .botoes-navegacao,
+    .botoes-interativos {
+        flex-direction: column; /* Botões um abaixo do outro em telas menores */
+        gap: 10px; /* Espaçamento entre os botões */
+    }
+
+    .botoes-navegacao button,
+    .botoes-interativos button,
+    .popup-actions button {
+        width: 100%; /* Botões ocupam a largura total */
+        margin: 5px 0; /* Ajuste margem vertical */
+    }
+
+    /* Barra de Status e Botões Fixos em mobile */
+    .barra-status, .botoes-fixos {
+        flex-wrap: wrap; /* Permite que os itens quebrem linha */
+        justify-content: center; /* Centraliza os itens */
+        padding: 8px 5px; /* Reduzir padding */
+        position: fixed; /* Manter fixo na parte inferior */
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%; /* Ocupa 100% da largura da viewport */
+        z-index: 999; /* Garante que fique acima do conteúdo */
+    }
+
+    .barra-status span {
+        font-size: 0.85em; /* Reduzir tamanho da fonte */
+        margin: 0 5px;
+        white-space: nowrap; /* Evita que o texto "Habilidade: X" quebre */
+    }
+
+    .botoes-fixos button {
+        font-size: 0.8em; /* Reduzir tamanho da fonte */
+        padding: 6px 10px;
+        margin: 3px; /* Margem menor entre botões */
+    }
+
+    /* Popups em mobile */
+    .popup-content {
+        width: 95%; /* Ocupa quase toda a largura em mobile */
+        padding: 15px; /* Reduzir padding do popup */
+        max-height: 90vh; /* Limitar altura para caber na tela */
+    }
+
+    .status-popup-content {
+        padding: 10px;
+    }
+
+    /* ********************************************************** */
+    /* RESPONSIVIDADE PARA A FICHA DE STATUS EM MOBILE - COMEÇO */
+    /* ********************************************************** */
+
+    .atributo-linha-flex {
+        flex-direction: column; /* Em telas pequenas, empilha as colunas */
+        gap: 15px; /* Reduz o espaçamento entre as linhas */
+    }
+
+    .atributo-coluna {
+        min-width: unset; /* Remove a largura mínima para se ajustar melhor */
+        width: 100%; /* Colunas ocupam 100% da largura em mobile */
+        gap: 5px; /* Reduz o gap entre os elementos dentro da coluna */
+    }
+    
+    .atributo-coluna.atributo-ouro-centralizado {
+        flex: unset; /* Remove o flex fixo para se comportar como as outras colunas */
+        width: 100%;
+        align-items: center; /* Centraliza o item de ouro */
+    }
+    
+    .atributo-item {
+        width: 100%; /* Garante que o item ocupe a largura total da coluna */
+        gap: 5px; /* Reduz o gap entre os elementos */
+    }
+
+    .atributo-item label {
+        align-self: flex-start; /* Alinha o label à esquerda */
+    }
+
+    .atributo-item input[type="number"],
+    .atributo-item button.btn-fixar,
+    .botoes-ajuste-wrapper {
+        width: 100%; /* Todos os elementos ocupam 100% da largura em mobile */
+    }
+
+    .botoes-ajuste-wrapper {
+        flex-direction: row; /* Mantém os botões + e - lado a lado */
+        width: 100%; /* Ocupa 100% */
+    }
+
+    .atributo-item button.btn-ajuste {
+        flex: 1; /* Ocupam metade da largura disponível */
+    }
+
+    /* ********************************************************** */
+    /* RESPONSIVIDADE PARA A FICHA DE STATUS EM MOBILE - FIM */
+    /* ********************************************************** */
+
+
+    .inventario-secao {
+        flex-direction: column; /* Empilha itens de inventário verticalmente */
+        align-items: flex-start;
+    }
+
+    .inventario-secao input[type="text"],
+    .inventario-secao select {
+        width: 100%; /* Campos de input/select ocupam largura total */
+        margin-right: 0; /* Remover margem direita */
+        margin-bottom: 5px; /* Espaço entre campos */
+    }
+
+    #inputEncantoQuantidade {
+        width: 100%; /* Quantidade também ocupa largura total */
+        margin-left: 0; /* Remover margem esquerda */
+        margin-bottom: 5px;
+    }
+    
+    .inventario-secao button {
+        width: 100%; /* Botões de adicionar ocupam largura total */
+        margin: 5px 0;
+    }
+
+    /* Estilos para lista de itens com contador (Encantos e Equipamentos) */
+    .inventario-secao ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 10px;
+    }
+
+    .item-lista {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #7F2626;
+        padding: 8px 10px;
+        border-radius: 4px;
+        margin-bottom: 5px;
+        flex-wrap: wrap;
+    }
+
+    .item-lista .item-nome {
+        cursor: pointer;
+        font-weight: bold;
+        flex-grow: 1;
+        text-align: left;
+        margin-right: 10px;
+    }
+
+    .item-lista .item-quantidade-controle {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .item-lista .item-quantidade {
+        font-weight: bold;
+        min-width: 20px;
+        text-align: center;
+    }
+
+    .item-lista .btn-ajuste-item {
+        background-color: #CC6600;
+        color: #FFFFFF;
+        border: none;
+        padding: 3px 8px;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 0.9em;
+        min-width: 25px;
+        height: 25px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .item-lista .btn-ajuste-item:hover {
+        background-color: #e07b00;
+    }
+
+    .inventario-secao li button.remover-item {
+        margin-left: 10px;
+    }
+
+    /* Popup de Dados */
+    .dados-popup-content {
+        width: 95%; /* Ajustado para mobile */
+        flex-direction: column;
+    }
+
+    .dados-popup-content button[data-num-dados] {
+        width: 100%; /* Botões de rolagem ocupam largura total */
+    }
+}
